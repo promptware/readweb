@@ -1,0 +1,35 @@
+---
+alwaysApply: true
+---
+Use ESM only.
+
+Avoid using `any` as much as possible. Type functions explicitly.
+
+Prefer accepting typed records as function parameters, and type the return value:
+
+BAD:
+
+```
+function foo(a: Param1, b: Param2) { ... }
+```
+
+GOOD:
+
+```
+function foo({a, b}: { a: Param1, b: Param2 }): Result { ... }
+```
+
+Never mute exceptions. At least log them.
+
+Be aware of the formatter setup.
+
+You can use these commands to check your work:
+
+- pnpm run test
+- pnpm run lint
+
+Never reexport any definitions.
+
+When you move something to a new file, DO NOT leave comments about the new location of the definition.
+
+Never add backwards compatibility layers. The codebase is supposed to be always in sync, we can break APIs.

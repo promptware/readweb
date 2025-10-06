@@ -1,0 +1,6 @@
+---
+alwaysApply: true
+---
+When writing tests, prefer deeply nested objects (expect.deepEqual) over multiple simple assertions.
+The test must use deep equality on whole objects in a single assertion per case, not many assertions for each object component.
+

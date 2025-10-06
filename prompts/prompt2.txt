@@ -1,0 +1,1 @@
+Your task now is to reflect on the markdown output and EITHER produce a new preset object, or produce { reasoning: string; ok: true } object.

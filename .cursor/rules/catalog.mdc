@@ -1,0 +1,53 @@
+---
+globs: package.json
+alwaysApply: false
+---
+This workspace uses **pnpm catalogs** to ensure unified tooling versions across all packages.
+
+## How It Works
+
+All shared dependency versions are defined once in `pnpm-workspace.yaml` under the `catalog:` section. Individual packages reference these versions using the `catalog:` protocol.
+
+### Catalog Definition
+
+```yaml
+# pnpm-workspace.yaml
+catalog:
+  typescript: ^5.6.2
+  esbuild: ^0.21.5
+  # ... etc
+```
+
+### Package Reference
+
+```json
+// package.json
+{
+  "devDependencies": {
+    "typescript": "catalog:",
+    "esbuild": "catalog:"
+  }
+}
+```
+
+## Adding New Shared Dependencies
+
+1. Add the version to the catalog in `pnpm-workspace.yaml`:
+   ```yaml
+   catalog:
+     new-package: ^1.2.3
+   ```
+
+2. Reference it in packages using `catalog:`:
+   ```json
+   "new-package": "catalog:"
+   ```
+
+3. Run `pnpm install` to apply changes
+
+## Updating Shared Versions
+
+1. Update the version in `pnpm-workspace.yaml`
+2. Run `pnpm install` across the workspace
+
+All packages using `catalog:` will automatically get the updated version.

@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+Never use Vite, use esbuild.
+Always use ts-pattern exhaustive match instead of if-chains or switch
