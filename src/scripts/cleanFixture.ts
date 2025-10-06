@@ -1,12 +1,14 @@
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
 import { FixtureSchema } from '../types/fixture';
-import { suggestPreset } from '../presets/suggestPreset';
+import { cleanupToCheerio } from '../dom/cleanup';
+import { asHtml } from '../types/newtype';
+import { formatHtml } from '../dom/format';
 
 async function main() {
   const fileArg = process.argv[2];
   if (!fileArg) {
-    console.error('Usage: pnpm tsx src/scripts/runFixture.ts <path/to/fixture.json>');
+    console.error('Usage: pnpm tsx src/scripts/cleanFixture.ts <path/to/fixture.json>');
     process.exit(1);
   }
   const p = resolve(process.cwd(), fileArg);
@@ -24,19 +26,14 @@ async function main() {
     console.error('Must be of format: { "url": "https://example.com", "html": "<html>...</html>" }');
     process.exit(1);
   }
-
   const { html, url } = parsed.data;
-  const result = await suggestPreset({ html, url });
-  console.log('\n=== Final Markdown ===\n');
-  console.log(result.markdown);
-  console.log('\n=== Preset ===\n');
-  console.log(JSON.stringify(result.preset, null, 2));
-  console.log('\nAccepted:', result.accepted);
+  const $ = cleanupToCheerio({ html: asHtml(html), url });
+  const cleanedHtmlStr = $.root().html() ?? '';
+  console.log('\n=== Cleaned HTML ===\n');
+  console.log(await formatHtml(cleanedHtmlStr));
 }
 
 main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-
-

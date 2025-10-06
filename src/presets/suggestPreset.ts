@@ -62,7 +62,19 @@ These are CSS selectors used to capture the main human-readable content. Multipl
 
 ## \`main_content_filters\`
 
-Filters can be used to "exclude" certain elements from the main content, like ads, banners, popups, sponsored content, distractions, etc. But if you struggle with creating a set of useful filters, 
+Filters can be used to "exclude" certain elements from the main content, like:
+- ads
+- banners
+- popups
+- sponsored content
+- distractions
+- tables of contents
+- cookie consent banners
+- modals
+- paywall banners
+- etc.
+
+But if you struggle with creating a set of useful filters, 
 simply accept that filtering will not be perfect and ignore: we are NOT building an ad blocker with complex heuristics, cleaning up the noise is a SECONDAY GOAL and OPTIONAL.
 
 # General rules for selectors
@@ -87,6 +99,10 @@ Your goal is to help transform this HTML page into a readable chunk of content, 
 
 Your task will be to produce multiple CSS selectors that can be used to extract readable contents.
 After that, the preset will be automatically applied and the results will be shown to you as markdown, so that you can reflect on it and adjust the output.
+
+# Output
+
+DO NOT produce any output other than tool calls.
 
 # Examples
 
@@ -161,14 +177,13 @@ This is bad, you must try another attempt:
 (The rest will be the same as in the first example.)
 `;
 
-export async function suggestPreset({ html, maxSteps = 5 }: { html: string; maxSteps?: number }): Promise<SuggestPresetResult> {
+export async function suggestPreset({ html, url, maxSteps = 5 }: { html: string; url: string; maxSteps?: number }): Promise<SuggestPresetResult> {
   const promptText = systemPrompt;
   // Pre-clean the input HTML to reduce token usage and noise for the LLM/tools
-  const cleaned$ = cleanupToCheerio({ html: asHtml(html) });
+  const cleaned$ = cleanupToCheerio({ html: asHtml(html), url });
   const cleanedHtmlStr = cleaned$.root().html() ?? '';
   console.log(`[suggestPreset] html.length: ${html.length}, cleanedHtmlStr.length: ${cleanedHtmlStr.length}`);
   console.log(`[suggestPreset] cleanedHtmlStr: ${await formatHtml(cleanedHtmlStr)}`);
-
   let lastPreset: Preset | null = null;
   let lastMarkdown: string | null = null;
   let accepted = false;

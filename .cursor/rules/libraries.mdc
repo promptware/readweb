@@ -2,4 +2,4 @@
 alwaysApply: true
 ---
 Never use Vite, use esbuild.
-Always use ts-pattern exhaustive match instead of if-chains or switch
+Always use ts-pattern exhaustive match instead of if-chains or switch when you are inspecting a complex value. You can use if chains if you need to check a condition.
