@@ -1,49 +1,52 @@
 import * as cheerio from 'cheerio';
 import { Preset } from '../types/preset';
 import { Html, asHtml } from '../types/newtype';
+import { validatePresetCritical } from './validatePreset';
 
 export type ApplyResult =
   | { type: 'preset_match_detectors_failed'; failed_selectors: string[] }
   | { type: 'main_content_selectors_failed'; failed_selectors: string[] }
-  | Html;
+  | { type: 'invalid_selectors_failed'; failed_selectors: string[] }
+  | { type: 'ok'; html: Html };
 
 export async function applyPresetToHtml({ html, preset }: { html: Html; preset: Preset }): Promise<ApplyResult> {
   const $ = cheerio.load(html as unknown as string);
 
-  // 1) Validate all preset_match_detectors hit at least one node
-  const failedMatch: string[] = [];
-  for (const sel of preset.preset_match_detectors) {
-    if ($(sel).length === 0) failedMatch.push(sel);
-  }
-  if (failedMatch.length > 0) {
-    return { type: 'preset_match_detectors_failed', failed_selectors: failedMatch };
+  // Critical validation first
+  const criticalProblems = validatePresetCritical({ html: $, preset });
+  if (criticalProblems.length > 0) {
+    // Prioritize invalid selectors, then preset match, then main content selectors
+    const invalid = criticalProblems.find((p) => p.type === 'invalid_selectors_detected');
+    if (invalid && 'selector' in invalid) {
+      return { type: 'invalid_selectors_failed', failed_selectors: invalid.selector };
+    }
+    const presetFailed = criticalProblems.find((p) => p.type === 'preset_match_detectors_did_not_hit_any_node');
+    if (presetFailed && 'selector' in presetFailed) {
+      return { type: 'preset_match_detectors_failed', failed_selectors: presetFailed.selector };
+    }
+    const mainFailed = criticalProblems.find((p) => p.type === 'main_content_selectors_failed');
+    if (mainFailed && 'selector' in mainFailed) {
+      return { type: 'main_content_selectors_failed', failed_selectors: mainFailed.selector };
+    }
   }
 
-  // 2) Collect main content fragments
+  // If validation passed, proceed unsafely
+  return applyPresetToHtmlUnsafe({ html, preset });
+}
+
+export async function applyPresetToHtmlUnsafe({ html, preset }: { html: Html; preset: Preset }): Promise<ApplyResult> {
+  const $ = cheerio.load(html as unknown as string);
   const fragments: string[] = [];
-  const failedMain: string[] = [];
-  for (const sel of preset.main_content_detectors) {
+  for (const sel of preset.main_content_selectors) {
     const nodes = $(sel);
-    if (nodes.length === 0) {
-      failedMain.push(sel);
-      continue;
-    }
     nodes.each((_, el) => { fragments.push($.html(el) ?? ''); });
   }
-  if (fragments.length === 0) {
-    return { type: 'main_content_selectors_failed', failed_selectors: failedMain.length ? failedMain : preset.main_content_detectors };
-  }
-
-  // 3) Build a document from fragments and apply filters
   const $doc = cheerio.load(fragments.join('\n'));
   for (const sel of preset.main_content_filters) {
     $doc(sel).remove();
   }
-
-  // 4) Convert to Markdown
   const cleanedHtml = $doc.root().html() ?? '';
-  if (!cleanedHtml.trim().length) return asHtml('');
-  return asHtml(cleanedHtml);
+  return { type: 'ok', html: asHtml(cleanedHtml) };
 }
 
 

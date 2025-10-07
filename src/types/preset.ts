@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 export const PresetSchema = z
   .object({
-    preset_match_detectors: z.array(z.string().min(1)),
-    main_content_detectors: z.array(z.string().min(1)),
+    preset_match_detectors: z.array(z.string().min(1)).min(1),
+    main_content_selectors: z.array(z.string().min(1)).min(1),
     main_content_filters: z.array(z.string().min(1)),
   })
   .strict();
