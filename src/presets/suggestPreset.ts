@@ -2,7 +2,7 @@ import { readFile } from 'fs/promises';
 import { z } from 'zod';
 import { generateText, stepCountIs } from 'ai';
 import { openrouter } from '../clients/ai';
-import { config } from '../config';
+import { ENV } from '../env';
 import { Preset, PresetSchema } from '../types/preset';
 import { applyPresetToHtml, ApplyResult } from './applyPreset';
 import { validatePresetCritical, validatePresetNonCritical, renderCriticalPresetValidationProblems, renderNonCriticalPresetValidationProblems } from './validatePreset';
@@ -344,7 +344,7 @@ export async function suggestPreset({ html, url, maxSteps = 5 }: { html: string;
   ].join('\n');
 
   await generateText({
-    model: openrouter(config.openRouter.model),
+    model: openrouter(ENV.OPENROUTER_MODEL),
     prompt,
     tools,
     toolChoice: 'auto',

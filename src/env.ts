@@ -26,6 +26,7 @@ if (envPath) dotenv.config({ path: envPath });
 const EnvSchema = z.object({
   OPENROUTER_API_KEY: z.string().min(1),
   OPENROUTER_MODEL: z.string().min(1),
+  FIRECRAWL_API_KEY: z.string().min(1),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

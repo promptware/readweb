@@ -1,8 +1,8 @@
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
-import { config } from '../config';
+import { ENV } from '../env';
 
 export const openrouter = createOpenRouter({
-  apiKey: config.openRouter.apiKey,
+  apiKey: ENV.OPENROUTER_API_KEY,
 });
 
 
