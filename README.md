@@ -19,7 +19,7 @@ This project implements three pipelines:
 
 1. Programmatic [mozilla/readability](https://github.com/mozilla/readability) (a.k.a. "reader mode") as HTML -> markdown API
 
-2. "Page preset" generation: HTML -> Preset:
+2. ["Page preset" generation](src/presets/suggestPreset.ts): HTML -> Preset:
 
 ```typescript
 type Preset = {
@@ -31,4 +31,4 @@ type Preset = {
 type CSSSelector = string;
 ```
 
-3. Applying page preset: Preset + HTML -> Markdown
+3. [Applying page preset](./src/presets/applyPreset.ts): Preset + HTML -> Markdown
