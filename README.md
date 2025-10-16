@@ -37,3 +37,20 @@ type CSSSelector = string;
 ```
 
 3. [Applying page preset](./src/presets/applyPreset.ts): Preset + HTML -> Markdown
+
+## Try it
+
+There is a vibed webserver page that implements a demo.
+
+It compares these methods side by side:
+
+- our preset generation flow
+- Firecrawl URL -> markdown
+- literal HTML -> markdown (similar to Firecrawl, but not exactly)
+- Mozilla's Readability (reader mode)
+
+![demo page](./img/webserver.png)
+
+1. Populate `.env` (see [.env.example](./.env.example)). Firecrawl is used for HTML fetching
+2. `pnpm install`
+3. `pnpm run start:web`
