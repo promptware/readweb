@@ -23,8 +23,11 @@ This project implements three pipelines:
 
 ```typescript
 type Preset = {
+    // anchors to make this preset more fragile on purpose
     preset_match_detectors: CSSSelector[];
+    // main content extractors
     main_content_selectors: CSSSelector[];
+    // filter selectors to trim the main content
     main_content_filters: CSSSelector[];
 };
 
