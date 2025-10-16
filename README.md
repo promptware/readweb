@@ -17,9 +17,7 @@ Naive HTML -> Markdown conversion produces a ton of garbage that wastes tokens a
 
 This project implements three pipelines:
 
-1. Programmatic [mozilla/readability](https://github.com/mozilla/readability) (a.k.a. "reader mode") as HTML -> markdown API
-
-2. ["Page preset" generation](src/presets/suggestPreset.ts): HTML -> Preset:
+1. ["Page preset" generation](src/presets/suggestPreset.ts): HTML -> Preset:
 
 ```typescript
 type Preset = {
