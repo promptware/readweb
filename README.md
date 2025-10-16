@@ -40,7 +40,9 @@ type CSSSelector = string;
 
 ## Try it
 
-There is a vibed webserver page that implements a demo.
+I deployed a demo for you to try: https://readweb.osint.moe/ (temporary - it may run out of firecrawl credits).
+
+![demo page](./img/webserver.png)
 
 It compares these methods side by side:
 
@@ -49,7 +51,7 @@ It compares these methods side by side:
 - literal HTML -> markdown (similar to Firecrawl, but not exactly)
 - Mozilla's Readability (reader mode)
 
-![demo page](./img/webserver.png)
+To run the demo by yourself,
 
 1. Populate `.env` (see [.env.example](./.env.example)). Firecrawl is used for HTML fetching
 2. `pnpm install`
