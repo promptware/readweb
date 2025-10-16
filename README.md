@@ -23,11 +23,13 @@ This project implements three pipelines:
 
 ```typescript
 type Preset = {
-    // anchors to make this preset more fragile on purpose
+    // anchors to make this preset more fragile on purpose.
+    // Elements that identify website engine layout go here.
     preset_match_detectors: CSSSelector[];
     // main content extractors
     main_content_selectors: CSSSelector[];
-    // filter selectors to trim the main content
+    // filter selectors to trim the main content.
+    // banners, subscription forms, sponsor content
     main_content_filters: CSSSelector[];
 };
 
