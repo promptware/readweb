@@ -34,7 +34,11 @@ type Preset = {
 type CSSSelector = string;
 ```
 
-3. [Applying page preset](./src/presets/applyPreset.ts): Preset + HTML -> Markdown
+Preset generation uses a feedback loop that enhances + applies preset until the markdown is really clean.
+
+2. [Applying page preset](./src/presets/applyPreset.ts): Preset + HTML -> Markdown
+
+3. Programmatic [mozilla/readability](https://github.com/mozilla/readability) (a.k.a. "reader mode") as HTML -> markdown API. Just for comparison with how far we can get with naive heuristics on the modern web.
 
 ## Try it
 
