@@ -22,7 +22,7 @@ export interface SuggestPresetResult {
 const systemPrompt = `
 # Overall system overview
 
-To give you overall contenxt of what is happening, you are a part of a larger system, the goal of which is to transform pages into readable "main content" excerpts. 
+To give you overall context of what is happening, you are a part of a larger system, the goal of which is to transform pages into readable "main content" excerpts.
 
 It does so by using Presets tailored for particular websites.
 
@@ -88,7 +88,7 @@ Elements that SHOULD NOT be filtered out are:
 
 The filter selectors will be applied to the main content fragments only, so only include selectors relevant to the main content, and NOT the contents outside of the main content.
 
-But if you struggle with creating a set of useful filters, 
+But if you struggle with creating a set of useful filters,
 simply accept that filtering will not be perfect and ignore: we are NOT building an ad blocker with complex heuristics, cleaning up the noise is a SECONDAY GOAL and OPTIONAL.
 
 # General rules for selectors
@@ -364,5 +364,3 @@ export async function suggestPreset({ html, url, maxSteps = 5 }: { html: string;
 
   return { preset: lastPreset, markdown: lastMarkdown ?? '', accepted };
 }
-
-

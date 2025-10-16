@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "test": "tsx --test test/**/*.test.ts",
     "run:fixture": "tsx src/scripts/runFixture.ts",
-    "clean:fixture": "tsx src/scripts/cleanFixture.ts"
+    "clean:fixture": "tsx src/scripts/cleanFixture.ts",
+    "start:web": "tsx src/web/server.ts"
   },
   "engines": {
     "node": ">=20"
@@ -23,6 +24,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "@dqbd/tiktoken": "^1.0.22",
     "@mozilla/readability": "^0.6.0",
     "@openrouter/ai-sdk-provider": "^1.2.0",
     "@types/jsdom": "^27.0.0",

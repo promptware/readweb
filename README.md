@@ -1,123 +1,34 @@
-# Content Extraction Service Specification
+# Smart HTML → Markdown Scraper
 
-## Purpose
-Extract the main content from any web page and return it as clean Markdown, aggressively removing non-content elements to save LLM tokens. Supports dynamic content (JS-rendered pages) and LLM-assisted selector generation.
+A specialized pipeline for extracting **clean, token-efficient markdown** from websites.
+Instead of dumping entire HTML pages into an LLM and wasting context on useless junk, this scraper zeroes in on the main content while stripping away everything else.
 
----
+## Problem
 
-## 1. Input/Output
+Naive HTML -> Markdown conversion produces a ton of garbage that wastes tokens and pollutes LLM workflows. Typical noise includes:
 
-**HTTP API:**
+- Navigation panels
+- Popups
+- Cookie consent banners
+- Table of contents
+- Headers / footers
 
-- **Endpoint:** `/extract`
-- **Method:** `POST`
-- **Input JSON:**
-```ts
-{
-  url: string,
-  html: string
-}
-```
-- **Output JSON:**
-```ts
-{
-  main: string // markdown
-}
-```
+## Solution
 
----
+This project implements three pipelines:
 
-## 2. Stages / Workflow
+1. Programmatic [mozilla/readability](https://github.com/mozilla/readability) (a.k.a. "reader mode") as HTML -> markdown API
 
-1. **Initial Cleanup**
-   - Remove all `<style>` and `<script>` elements.
-   - Keep only elements with visual representation.
-   
-2. **Preset Lookup**
-   - Query saved presets for the given URL, ordered by successful hit count.
-   
-3. **Preset Application**
-   - If presets exist:
-     - Iterate over presets until one successfully applies.
-     - Generate output using that preset.
-   - If no presets exist:
-     - Enter `createPresets` procedure using LLM to generate selectors.
+2. "Page preset" generation: HTML -> Preset:
 
-4. **Content Extraction**
-   - Apply `main_content_selectors` to extract content.
-   - Apply `main_content_filters` to exclude embedded unwanted elements.
-   - Concatenate results and convert to Markdown.
+```typescript
+type Preset = {
+    preset_match_detectors: CSSSelector[];
+    main_content_selectors: CSSSelector[];
+    main_content_filters: CSSSelector[];
+};
 
----
-
-## 3. Preset Structure
-
-```ts
-interface Selector {
-  type: 'css' | 'xpath',
-  selector: string
-}
-
-interface Preset {
-  preset_match_detectors: Selector[],  // must match for this preset to apply
-  main_content_selectors: Selector[],  // selectors for main content
-  main_content_filters: Selector[]     // selectors to exclude from main content
-}
+type CSSSelector = string;
 ```
 
-**Notes:**
-- `preset_match_detectors` ensures the page layout matches what has been successfully processed before.
-- `main_content_selectors` define the main content areas.
-- `main_content_filters` remove unwanted embedded content before conversion.
-
----
-
-## 4. LLM-Assisted Preset Creation
-
-- Generate candidate `main_content_selectors` and `main_content_filters`.
-- Optionally suggest `preset_match_detectors`.
-- Output must conform to the `Preset` structure.
-- Iteratively refine by applying filters and asking LLM to adjust if noise remains.
-
----
-
-## 5. Selector Types
-
-- CSS selectors: `{ type: 'css', selector: 'div.article-content' }`
-- XPath selectors: `{ type: 'xpath', selector: '//div[@id="main"]' }`
-
----
-
-## 6. Scope & Limitations
-
-- Currently supports single-page extraction.
-- Users provide the URL and raw HTML.
-- Aggressive filtering is required to minimize token usage.
-- Future improvements can include multi-page or batch extraction.
-
----
-
-# Stack
-
-## Backend
-- **Runtime**: Node.js + TypeScript
-- **HTTP API**: Express
-
-## HTML Processing
-- `cheerio`: Fast HTML parsing and CSS selector support.
-- `xpath` (npm): If XPath selector support is needed.
-- `sanitize-html`: Optionally for aggressive clean-up of noise elements.
-
-## Markdown Conversion
-- `turndown`: Reliable HTML → Markdown conversion.
-
-## LLM Integration
-- gemini flash via openrouter
-
-## Preset Storage
-- PostgreSQL
-
-## Testing & Dev Utilities
-- `zod` for schema validation.
-- `pnpm` for fast mono-repo management.
-
+3. Applying page preset: Preset + HTML -> Markdown

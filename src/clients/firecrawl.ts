@@ -31,4 +31,14 @@ export async function fetchHTMLFirecrawl({ url }: { url: string }): Promise<stri
   }
 }
 
+export async function fetchHtmlAndMarkdownFirecrawl({ url }: { url: string }): Promise<{ html: string; markdown: string; }> {
+  // Single request for both formats; no fallback.
+  const doc = await firecrawlV2.scrape(url, { formats: ['html', 'markdown'] });
+  const { html, markdown } = doc;
+  if (!html || !markdown) {
+    throw new Error(`Firecrawl missing format(s): ${!html ? 'html ' : ''}${!markdown ? 'markdown' : ''}`.trim());
+  }
+  return { html, markdown };
+}
+
 
