@@ -1,7 +1,6 @@
 # Smart HTML → Markdown Scraper
 
 A specialized pipeline for extracting **clean, token-efficient markdown** from websites.
-Instead of dumping entire HTML pages into an LLM and wasting context on useless junk, this scraper zeroes in on the main content while stripping away everything else.
 
 ## Problem
 
@@ -50,7 +49,7 @@ It compares these methods side by side:
 
 - our preset generation flow
 - Firecrawl URL -> markdown
-- literal HTML -> markdown (similar to Firecrawl, but not exactly)
+- literal HTML -> markdown (similar to Firecrawl, but not exactly the same)
 - Mozilla's Readability (reader mode)
 
 To run the demo by yourself,
